@@ -17,7 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -26,6 +31,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +59,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun NavegacaoApp() {
     val navController = rememberNavController()
@@ -66,7 +72,22 @@ fun NavegacaoApp() {
         }
 
         composable("main"){
-            EcraMain()
+            EcraMain(navController)
+        }
+        composable("experiments"){
+            EcraExperiments(navController)
+        }
+        composable("sensors"){
+            EcraSensors(navController)
+        }
+        composable("visualize"){
+            EcraVisualization(navController)
+        }
+        composable("add_experiments"){
+            EcraAddExperiments(navController)
+        }
+        composable("manage_experiments"){
+            EcraManageExperiments(navController)
         }
     }
 }
@@ -282,54 +303,205 @@ fun EcraCreateAccount(navController: NavController) {
 
 
 @Composable
-fun EcraMain(){
+fun EcraMain(navController: NavController) {
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp) // Margem lateral
-            .padding(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            )
+        Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        // Topo: Bem-vindo
         Text(
-            text = "Bem-vindo à App",
-            fontSize = 28.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
+            text = "Select one of the options",
+            fontSize = 20.sp,
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
         )
 
-        // Meio: Conteúdo central
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
+        Button(
+            onClick = { navController.navigate("experiments") },
         ) {
-            Text(
-                text = "Aqui vai o conteúdo principal da tela",
-                fontSize = 18.sp
-            )
+            Text("Experiments")
         }
 
-        // Rodapé: Botões
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        Button(
+            onClick = { navController.navigate("sensors") },
         ) {
-            Button(onClick = { /* ação do botão 1 */ }) {
-                Text("Botão 1")
+            Text("Sensors")
+        }
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        Button(
+            onClick = { navController.navigate("visualize") },
+        ) {
+            Text("Visualize Data")
+        }
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+    }
+}
+
+
+@Composable
+fun EcraExperiments(navController: NavController) {
+    Column(
+        Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Experiments",
+            fontSize = 30.sp,
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+        Button(
+            onClick = { navController.navigate("add_experiments") },
+        ) {
+            Text("Add Experiment")
+        }
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        Button(
+            onClick = { navController.navigate("manage_experiments") },
+        ) {
+            Text("Manage Experiments")
+        }
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        Button(
+            onClick = { navController.navigate("main") },
+        ) {
+            Text("Return")
+        }
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+    }
+}
+
+
+
+@Composable
+fun EcraSensors(navController: NavController){}
+
+@Composable
+fun EcraVisualization(navController: NavController){}
+
+@Composable
+fun EcraAddExperiments(navController: NavController) {
+
+    var exp_title = remember { mutableStateOf("") }
+    var exp_objective = remember { mutableStateOf("") }
+    var exp_date = remember { mutableStateOf("") }
+    var exp_tagInput = remember { mutableStateOf("") }       // Current tag being typed
+    var exp_tags = remember { mutableStateOf(listOf<String>()) } // List of tags
+
+
+
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Add your Experiment",
+            fontSize = 30.sp,
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        Text(
+            text = "Insert your experiment-related information.",
+            fontSize = 10.sp,
+        )
+        TextField(
+            value = exp_title.value,
+            label = { Text("Title") },
+            onValueChange = { exp_title.value = it }
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+        TextField(
+            value = exp_objective.value,
+            label = { Text("Objective") },
+            onValueChange = { exp_objective.value = it }
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        TextField(
+            value = exp_date.value,
+            onValueChange = {
+                if (it.matches(Regex("[0-9.]*")) && it.length <= 10) {
+                    exp_date.value = it
+                }
+            },
+            label = { Text("Date (DD.MM.YYYY)") },
+            placeholder = { Text("DD.MM.YYYY") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+        TextField(
+            value = exp_tagInput.value,
+            onValueChange = { exp_tagInput.value = it },
+            label = { Text("Add Tag") },
+            placeholder = { Text("Enter a tag") },
+            trailingIcon = {
+                IconButton(onClick = {
+                    val trimmed = exp_tagInput.value.trim()
+                    if (trimmed.isNotEmpty() && !exp_tags.value.contains(trimmed)) {
+                        exp_tags.value = exp_tags.value + trimmed  // add to list
+                        exp_tagInput.value = ""                     // clear input
+                    }
+                }) {
+                    Icon(Icons.Default.Add, contentDescription = "Add tag")
+                }
+            },
+            singleLine = true
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp))
+        {
+            Button(
+                onClick = { navController.navigate("experiments") },
+            ) {
+                Text("Add Experiment")
             }
-            Button(onClick = { /* ação do botão 2 */ }) {
-                Text("Botão 2")
+
+            Button(
+                onClick = { navController.navigate("experiments") },
+            ) {
+                Text("Return")
             }
-            Button(onClick = { /* ação do botão 3 */ }) {
-                Text("Botão 3")
-            }
+
+
         }
     }
+}
+
+
+@Composable
+fun EcraManageExperiments(navController: NavController) {
 }
