@@ -3,6 +3,7 @@ package com.example.tp.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,20 +20,27 @@ fun NavegacaoApp() {
         composable("login") { EcraLogin(navController) }
         composable("registo") { EcraCreateAccount(navController) }
         composable("main") { EcraMain(navController) }
-        composable("experiments") { EcraExperiments(navController) }
+        composable("add_experiments") { EcraAddExperiments(navController) }
 
-        // New route: sensors, takes experimentId as argument
         composable(
             route = "sensors/{experimentId}",
-            arguments = listOf(navArgument("experimentId") { defaultValue = "defaultExp" })
+            arguments = listOf(navArgument("experimentId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val experimentId = backStackEntry.arguments?.getString("experimentId") ?: "defaultExp"
+            val experimentId =
+                backStackEntry.arguments?.getString("experimentId") ?: return@composable
             EcraSensors(navController, experimentId)
         }
 
-//        composable("visualize") { EcraVisualization(navController) }
-        composable("add_experiments") { EcraAddExperiments(navController) }
-        composable("manage_experiments") { EcraManageExperiments(navController) }
+        composable(
+            route = "visualize/{experimentId}",
+            arguments = listOf(navArgument("experimentId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val experimentId =
+                backStackEntry.arguments?.getString("experimentId") ?: return@composable
+            EcraVisualization(navController, experimentId)
+        }
     }
 }
+
+
 
